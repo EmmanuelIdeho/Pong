@@ -1,6 +1,4 @@
 import pygame as pg
-import random
-import time
 
 #colors
 BLACK = (0, 0, 0)
@@ -13,12 +11,21 @@ GREEN = (0, 0, 255)
 WIDTH = 800
 HEIGHT = 600
 
+#A function to draw any text you want on the screen
+def draw_text(surf, text, size, x, y, color):
+    font_name = pg.font.match_font('arial')
+    font = pg.font.Font(font_name, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
 #blueprint for the player
 class Player(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface([20, 200])
-        self.image.fill(WHITE)
+        self.image.fill("green")
         self.rect = self.image.get_rect()
         self.rect.x = 30
         self.rect.y = 200
@@ -40,7 +47,7 @@ class Opponent(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface([20, 200])
-        self.image.fill(WHITE)
+        self.image.fill("purple")
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH - 60
         self.rect.y = 200
@@ -64,7 +71,7 @@ class Ball(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.radius = 15
         self.image = pg.Surface((self.radius*2-1, self.radius*2-1))
-        pg.draw.circle(self.image, "white", (self.radius, self.radius), self.radius)
+        pg.draw.circle(self.image, "red", (self.radius, self.radius), self.radius)
         self.speedx = 5
         self.speedy = 5
         self.rect = self.image.get_rect()
@@ -80,13 +87,11 @@ class Ball(pg.sprite.Sprite):
             self.speedy *= -1
         if self.rect.x < BOUNDS.left:
             opponent.score += 1
-            print("opponent score: "+ str(opponent.score))
             self.rect.x = WIDTH / 2
             self.rect.y = HEIGHT / 2
             self.speedx *= -1
         if self.rect.x+self.radius > BOUNDS.right:
             player.score += 1
-            print("player score: "+ str(player.score))
             self.rect.x = WIDTH / 2
             self.rect.y = HEIGHT / 2
             self.speedx *= -1
@@ -127,11 +132,12 @@ while running:
         ball.speedx *= -1
 
 
-    screen.fill(BLACK)
-
+    screen.fill("blue")
     #code to render the game
     all_sprites.draw(screen)
     all_sprites.update()
+    draw_text(screen, "Player:"+str(player.score), 30, WIDTH/2 - 100, 50, "black")
+    draw_text(screen, "Opponent:"+str(opponent.score), 30, WIDTH/2 + 100, 50, "black")
     pg.display.flip()
     clock.tick(FPS) #limits FPS(frames per second) to 60
 
